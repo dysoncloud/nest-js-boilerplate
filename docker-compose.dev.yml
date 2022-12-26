@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: dyson-admin-backend-db-server
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/data/postgres
+      - postgres-dbdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=dyson-admin-backend-db
+      - PGADMIN_DEFAULT_EMAIL=admin@dysoncloud.io
+      - PGADMIN_DEFAULT_PASSWORD=password
+    networks:
+      - postgres
+
+  pgadmin:
+    container_name: dyson-admin-backend-pgadmin
+    image: dpage/pgadmin4
+    ports:
+      - "9090:80"
+    volumes:
+      - pgadmin-data:/root/.pgadmin
+      - pgadmin-libdata:/var/lib/pgadmin
+    networks:
+      - postgres
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@dysoncloud.io
+      - PGADMIN_DEFAULT_PASSWORD=password
+    links:
+      - postgres:postgres
+    
+volumes:
+  postgres-data:
+    driver: local
+  postgres-dbdata:
+    driver: local
+  pgadmin-data:
+    driver: local
+  pgadmin-libdata:
+    driver: local
+
+networks:
+  postgres:
+    driver: bridge
